@@ -3,13 +3,12 @@ package com.dev.service;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
+import com.dev.dto.MemberDTO;
 import com.dev.entity.MemberDetails;
 
 public interface MemberDetailsService {
     
-    public ResponseEntity<MemberDetails> saveMemberDetails(MemberDetails memberDetails);
+    public ResponseEntity<MemberDTO> saveMemberDetails(MemberDTO memberDTO);
 
     public List<MemberDetails> getAllMemberDetails();
 

@@ -1,5 +1,6 @@
 package com.dev.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -40,5 +41,5 @@ public class MemberDetails {
     String dateOfBirth;
 
     @Column(name="club_joining_date")
-    private LocalDateTime dateTime;
+    private LocalDate dateTime;
 }

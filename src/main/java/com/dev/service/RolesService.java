@@ -11,7 +11,7 @@ import com.dev.entity.Roles;
 public interface RolesService {
     public ResponseEntity<Roles> saveRoles(Roles role);
 
-    public ResponseEntity<List<Roles>> getAllRoles();
+    public List<Roles> getAllRoles();
 
     public ResponseEntity<Roles> updateRole(Roles roles);
 

@@ -33,18 +33,9 @@ public class RolesServiceImpl implements RolesService{
 
 
     @Override
-    public ResponseEntity<List<Roles>> getAllRoles() {
+    public List<Roles> getAllRoles() {
 
-        if(rolesRepository.findAll()==null){
-
-            String message = "No roles present in database";
-
-            log.error(message);
-
-            throw new RoleNotFoundException(message);
-        }
-
-        return new ResponseEntity<>(rolesRepository.findAll(),HttpStatus.FOUND);
+        return rolesRepository.findAll();
     }
 
 

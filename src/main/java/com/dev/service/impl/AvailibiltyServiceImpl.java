@@ -1,6 +1,7 @@
 package com.dev.service.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.dev.entity.Availability;
 import com.dev.entity.MeetingDetails;
 import com.dev.entity.MemberDetails;
+import com.dev.entity.PreferredRoles;
 import com.dev.exception.AvailabilityNotFoundException;
 import com.dev.exception.MeetingDetailsNotFoundException;
 import com.dev.exception.MemberDetailsNotFoundException;
@@ -57,10 +59,22 @@ public class AvailibiltyServiceImpl implements AvailabilityService {
             throw new MemberDetailsNotFoundException("Member Details with id "+memberId+" is not present in database");
         }
 
-        availability.setMeeting(meetingDetails);
-        availability.setMember(memberOptional.get());
+        Availability availability2 = new Availability();
 
-        return new ResponseEntity<>(availabilityRespository.save(availability),HttpStatus.CREATED);
+        availability2.setId(availability.getId());
+        availability2.setIsAvailable(availability.getIsAvailable());
+        availability2.setMeeting(meetingDetails);
+        availability2.setMember(memberOptional.get());
+
+        List<PreferredRoles> preferredRoles = availability.getPreferredRoles();
+
+        Availability availability3 = availabilityRespository.save(availability);
+
+        for(PreferredRoles preferredRoles2 : preferredRoles){
+            
+        }
+
+        return new ResponseEntity<>(availability3,HttpStatus.CREATED);
 
 
     }
@@ -71,7 +85,21 @@ public class AvailibiltyServiceImpl implements AvailabilityService {
         if(availabilities==null){
             throw new AvailabilityNotFoundException("Availabilities not found in database");
         }
-        return new ResponseEntity<>(availabilities,HttpStatus.ACCEPTED);
+
+        List<Availability> availabilitiesList = new ArrayList<>();
+
+        for(Availability availability : availabilities){
+            MeetingDetails meetingDetails = new MeetingDetails();
+            MeetingDetails meetingDetails2 = availability.getMeeting();
+            meetingDetails.setId(meetingDetails2.getId());
+            meetingDetails.setTheme(meetingDetails2.getTheme());
+            meetingDetails.setVenue(meetingDetails2.getVenue());
+            meetingDetails.setDateTime(meetingDetails2.getDateTime());
+          availability.setMeeting(meetingDetails);
+          availabilitiesList.add(availability);
+        }
+
+        return new ResponseEntity<>(availabilitiesList,HttpStatus.ACCEPTED);
     }
     
 }

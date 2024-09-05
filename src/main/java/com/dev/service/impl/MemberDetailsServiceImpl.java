@@ -10,33 +10,110 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.dev.dto.MemberDTO;
 import com.dev.entity.MemberDetails;
+import com.dev.entity.MemberShip;
 import com.dev.exception.InvalidEmailAddressException;
 import com.dev.exception.InvalidPhoneNumberException;
 import com.dev.exception.MemberDetailsNotFoundException;
 import com.dev.repository.MemberDetailsRepository;
+import com.dev.repository.MembershipRepository;
 import com.dev.service.MemberDetailsService;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class MemberDetailsServiceImpl implements MemberDetailsService {
 
     @Autowired
     MemberDetailsRepository memberDetailsRepository;
 
+    @Autowired
+    MembershipRepository membershipRepository;
+
+    @Autowired
+	JavaMailSender sender;
+
+
+    public void sendRegistrationEmail(String to, String firstName) throws MessagingException {
+        log.info("service method calling");
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        log.info("Seeting to");
+		simpleMailMessage.setTo(to);
+
+        String subject = "Welcome to Toastmasters!";
+        log.info("Setting subject");
+        simpleMailMessage.setSubject(subject);
+
+        String body = "Dear " + firstName + ",\n\n" +
+                      "Thank you for registering on the Toastmasters website. We're excited to have you as a part of our community.\n" +
+                      "You can now access your account and start exploring the various resources we offer.\n\n" +
+                      "If you have any questions, feel free to reach out to us.\n\n" +
+                      "Best regards,\n" +
+                      "The Toastmasters Team";
+
+        // Create a MimeMessage
+        log.info("Creatingg MimeMEssae");
+        MimeMessage mimeMessage = sender.createMimeMessage();
+
+        // Use MimeMessageHelper to set the properties of the email
+        MimeMessageHelper mimeHelper = new MimeMessageHelper(mimeMessage, false);
+        mimeHelper.setTo(to);
+        mimeHelper.setSubject(subject);
+        mimeHelper.setText(body);
+
+        log.info("sending mail");
+        // Send the email
+        sender.send(mimeMessage);
+        log.info("mail sended");
+
+    }
+
+
+
     @Override
-    public ResponseEntity<MemberDetails> saveMemberDetails(MemberDetails memberDetails) {
+    public ResponseEntity<MemberDTO> saveMemberDetails(MemberDTO memberDTO) {
 
-        if(memberDetails!=null){
-            if(!(phoneNumberValid(memberDetails.getPhoneNumber()))){
-                throw new InvalidPhoneNumberException("Invalid Phone Number");
-            }
+        // if(memberDTO!=null){
+        //     if(!(phoneNumberValid(memberDTO.getPhoneNumber()))){
+        //         throw new InvalidPhoneNumberException("Invalid Phone Number");
+        //     }
 
-            if(!(emailValidate(memberDetails.getEmailAddress()))){
-                throw new InvalidEmailAddressException("Invalid Email Address");
-            }
-        }
+        //     if(!(emailValidate(memberDetails.getEmailAddress()))){
+        //         throw new InvalidEmailAddressException("Invalid Email Address");
+        //     }
+        // }
 
-       return new ResponseEntity<>(memberDetailsRepository.save(memberDetails),HttpStatus.CREATED);
+        MemberDetails memberDetails = new MemberDetails();
+        memberDetails.setFirstName(memberDTO.getFirstName());
+        memberDetails.setLastName(memberDTO.getLastName());
+        memberDetails.setAddress(memberDTO.getAddress());
+        memberDetails.setDateOfBirth(memberDTO.getDateOfBirth());
+        memberDetails.setPhoneNumber(memberDTO.getPhoneNumber());
+        memberDetails.setEmailAddress(memberDTO.getEmailAddress());
+        memberDetails.setDateTime(memberDTO.getDateTime());
+        memberDetails.setProfession(memberDTO.getProfession());
+        
+       MemberDetails memberDetails2 = memberDetailsRepository.save(memberDetails);
+
+        MemberShip memberShip = new MemberShip();
+
+        memberShip.setFees(memberDTO.getFees());
+        memberShip.setStartDate(memberDTO.getStartDate());
+        memberShip.setEndDate(memberDTO.getEndDate());
+        memberShip.setIsActive(memberDTO.getIsActive());
+        memberShip.setMemberDetails(memberDetails);
+
+        membershipRepository.save(memberShip);
+        memberDTO.setId(memberDetails.getId());
+       return new ResponseEntity<>(memberDTO,HttpStatus.CREATED);
     }
 
     @Override

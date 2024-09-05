@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.dev.entity.BackOut;
+
 @RestControllerAdvice
 public class GlobalException {
 
@@ -45,6 +47,11 @@ public class GlobalException {
 
     @ExceptionHandler(AvailabilityNotFoundException.class)
     public ResponseEntity<String> handleAvailabilityNotFoundException(AvailabilityNotFoundException ex){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BackOutNotFoundException.class)
+    public ResponseEntity<String> handleBackOutNoFoundtException(BackOutNotFoundException ex){
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
     }
 

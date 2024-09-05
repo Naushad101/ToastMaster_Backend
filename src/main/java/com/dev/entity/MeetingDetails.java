@@ -24,6 +24,7 @@ public class MeetingDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(name = "venue")
     private String venue;
 

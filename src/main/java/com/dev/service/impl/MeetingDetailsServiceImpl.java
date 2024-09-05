@@ -1,6 +1,7 @@
 package com.dev.service.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class MeetingDetailsServiceImpl implements MeetingDetailsService {
         meetingDetails = meetingDetailsRepository.save(meetingDetails2);
 
         for(RolesTaken rolesTaken : rolesTakens){
-            rolesTaken.setMemberDetails(memberDetailsRepository.findById(rolesTaken.getMemberDetails().getId()).orElseThrow());
+            rolesTaken.setMemberDetails(memberDetailsRepository.findByFirstName(rolesTaken.getMemberDetails().getFirstName()).orElseThrow());
             rolesTaken.setMeetingDetails(meetingDetails2);
             rolesTakenRepository.save(rolesTaken);
         }
@@ -60,10 +61,19 @@ public class MeetingDetailsServiceImpl implements MeetingDetailsService {
     @Override
     public ResponseEntity<List<MeetingDetails>> getAllMeetingDetails() {
        List<MeetingDetails> meetingDetails = meetingDetailsRepository.findAll();
+       List<MeetingDetails> meetingDetailsList = new ArrayList<>();
        if(meetingDetails==null){
             throw new MeetingDetailsNotFoundException("Meeting details not present in database");
        }
-       return new ResponseEntity<>(meetingDetails,HttpStatus.ACCEPTED);
+       for(MeetingDetails meeting : meetingDetails){
+            MeetingDetails mDetails = new MeetingDetails();
+            mDetails.setId(meeting.getId());
+            mDetails.setDateTime(meeting.getDateTime());
+            mDetails.setTheme(meeting.getTheme());
+            mDetails.setVenue(meeting.getVenue());
+            meetingDetailsList.add(mDetails);
+       }
+       return new ResponseEntity<>(meetingDetailsList,HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -96,6 +106,25 @@ public class MeetingDetailsServiceImpl implements MeetingDetailsService {
         meetingDetailsRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public MeetingDetails getMeetingDetails(Long id) {
+        Optional<MeetingDetails> meeOptional = meetingDetailsRepository.findById(id);
+        MeetingDetails mDetails = new MeetingDetails();
+        mDetails.setId(id);
+        mDetails.setDateTime(meeOptional.get().getDateTime());
+        mDetails.setTheme(meeOptional.get().getTheme());
+        mDetails.setVenue(meeOptional.get().getVenue());
+
+         List<RolesTaken> rolesTakens = rolesTakenRepository.findByMeetingDetails(mDetails);
+        List<RolesTaken> rolesTakenList = new ArrayList<>();
+        for(RolesTaken rolesTaken : rolesTakens){
+           rolesTaken.setMeetingDetails(null);
+           rolesTakenList.add(rolesTaken);
+        }
+        mDetails.setRoles(rolesTakenList);
+        return mDetails;
     }
     
 }

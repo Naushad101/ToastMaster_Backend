@@ -1,9 +1,11 @@
 package com.dev.entity;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,16 +27,15 @@ public class MemberShip {
     private int fees;
 
     @Column(name="start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name="end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private Boolean isActive;
 
     @OneToOne
     @JoinColumn(name="member_details_id")
     private MemberDetails memberDetails;
-
     
 }

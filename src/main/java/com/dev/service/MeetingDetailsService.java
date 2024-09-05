@@ -15,4 +15,6 @@ public interface MeetingDetailsService {
 
     public ResponseEntity<Void> deleteMeetingDetails(Long id);
 
+    public MeetingDetails getMeetingDetails(Long id);
+
 }
