@@ -1,5 +1,5 @@
 # Stage 1: Build and generate .jsa and .lst files
-FROM openjdk:21-jdk AS builder
+FROM jayesh2026/custom-jre:latest AS builder
 
 # Set the working directory
 WORKDIR /app
@@ -11,13 +11,13 @@ COPY build/libs/ToastMasterApp-0.0.1-SNAPSHOT.jar /app/ToastMasterApp.jar
 
 
 # Stage 2: Final image to run the application
-FROM openjdk:21-jdk
+# FROM openjdk:21-jdk
 
 # Set the working directory
-WORKDIR /app
+# WORKDIR /app
 
 # Copy the JAR and the .jsa file from the builder stage
-COPY --from=builder /app/ToastMasterApp.jar /app/ToastMasterApp.jar
+#  COPY --from=builder /app/ToastMasterApp.jar /app/ToastMasterApp.jar
 # COPY --from=builder /app/classes.jsa /app/classes.jsa
 #  COPY --from=builder /app/classes.lst /app/classes.lst
 # COPY --from=builder /app/app-cds.jsa /app/app-cds.jsa

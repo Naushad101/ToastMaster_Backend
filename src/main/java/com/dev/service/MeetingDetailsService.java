@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 
 import com.dev.entity.MeetingDetails;
 
+import jakarta.mail.MessagingException;
+
 public interface MeetingDetailsService {
-    public ResponseEntity<MeetingDetails> saveMeetingDetails(MeetingDetails meetingDetails);
+    public ResponseEntity<MeetingDetails> saveMeetingDetails(MeetingDetails meetingDetails) throws MessagingException;
 
     public ResponseEntity<List<MeetingDetails>> getAllMeetingDetails();
 

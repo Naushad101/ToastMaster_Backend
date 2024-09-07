@@ -1,5 +1,6 @@
 package com.dev.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -17,8 +18,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Data
 @NoArgsConstructor
+@Data
 public class MeetingDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +33,7 @@ public class MeetingDetails {
     private String theme;
     
     @Column(name="meeting_date")
-    private LocalDateTime dateTime;
+    private LocalDate dateTime;
 
     @OneToMany(mappedBy = "meetingDetails", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RolesTaken> roles;

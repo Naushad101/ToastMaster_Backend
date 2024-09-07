@@ -19,6 +19,7 @@ import com.dev.exception.MemberDetailsNotFoundException;
 import com.dev.repository.AvailabilityRespository;
 import com.dev.repository.MeetingDetailsRepository;
 import com.dev.repository.MemberDetailsRepository;
+import com.dev.repository.PreferredRepsitory;
 import com.dev.service.AvailabilityService;
 
 @Service
@@ -32,6 +33,9 @@ public class AvailibiltyServiceImpl implements AvailabilityService {
 
     @Autowired
     AvailabilityRespository availabilityRespository;
+
+    @Autowired
+    PreferredRepsitory preferredRepsitory;
 
     @Override
     public ResponseEntity<Availability> saveAvailability(Availability availability) {
@@ -71,10 +75,11 @@ public class AvailibiltyServiceImpl implements AvailabilityService {
         Availability availability3 = availabilityRespository.save(availability);
 
         for(PreferredRoles preferredRoles2 : preferredRoles){
-            
+            preferredRoles2.setAvailability(availability3);
+            preferredRepsitory.save(preferredRoles2);
         }
 
-        return new ResponseEntity<>(availability3,HttpStatus.CREATED);
+        return new ResponseEntity<>(availability2,HttpStatus.CREATED);
 
 
     }
